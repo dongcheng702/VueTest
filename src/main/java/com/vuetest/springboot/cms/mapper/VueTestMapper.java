@@ -28,10 +28,10 @@ public interface VueTestMapper {
 	    "<script>",
 	    "select * from market_store",
 	    "<where>",
-	    "<if test='form.storeId != null'>",
+	    "<if test='form.storeId != null and form.storeId != \"\"'>",
 	    "and storeId = #{form.storeId}",
 	    "</if>",
-	    "<if test='form.storeName != null'>",
+	    "<if test='form.storeName != null and form.storeName != \"\"'>",
 	    "and storeName = #{form.storeName}",
 	    "</if>",
 	    "</where>",
@@ -47,7 +47,7 @@ public interface VueTestMapper {
 	    "and storeId = #{form.storeId}",
 	    "</if>",
 	    "<if test='form.storeName != null and form.storeName != \"\"'>",
-	    "and storeName = #{form.storeName}",
+	    "and storeName like concat('%', #{form.storeName}, '%')", // 模糊查询条件
 	    "</if>",
 	    "</where>",
 	    "limit #{form.page}, #{form.pageSize}", // 添加分页查询条件，注意小写的page和pageSize
@@ -71,10 +71,10 @@ public interface VueTestMapper {
 	    "<script>",
 	    "delete from market_store",
 	    "<where>",
-	    "<if test='form.storeId != null'>",
+	    "<if test='form.storeId != null and form.storeId != \"\"'>",
 	    "and storeId = #{form.storeId}",
 	    "</if>",
-	    "<if test='form.storeName != null'>",
+	    "<if test='form.storeName != null and form.storeName != \"\"'>",
 	    "and storeName = #{form.storeName}",
 	    "</if>",
 	    "</where>",
@@ -98,7 +98,7 @@ public interface VueTestMapper {
 	    "</where>",
 	    "</script>"
 	})
-	int update(@Param("form") StoreForm form);
+	int updata(@Param("form") StoreForm form);
 	
 	
 	@Insert({

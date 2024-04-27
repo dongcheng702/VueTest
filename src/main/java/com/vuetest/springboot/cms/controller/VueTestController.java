@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.vuetest.springboot.cms.entity.VueTestBean;
 import com.vuetest.springboot.cms.form.storeform.StoreForm;
-import com.vuetest.springboot.cms.mapper.VueTestMapper;
 import com.vuetest.springboot.cms.service.VueTestService;
 
 import cn.hutool.poi.excel.ExcelUtil;
@@ -24,21 +23,18 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 @SpringBootApplication
 public class VueTestController {
-
-	@Autowired
-	private VueTestMapper vuetestManager;
 	@Autowired
 	private VueTestService service;
 
 	@GetMapping("/")
 	public List<VueTestBean> init() {
-		return vuetestManager.selectAll();
+		return service.selectAll();
 	}
 
 	@GetMapping("/selectIdMax")
 	public int selectIdMax() {
 		try {
-			int ret = vuetestManager.selectIdMax();
+			int ret = service.selectIdMax();
 
 			return ret;
 		} catch (Exception e) {
@@ -50,7 +46,7 @@ public class VueTestController {
 	@GetMapping("/selectCount")
 	public int selectCount() {
 		try {
-			int ret = vuetestManager.selectCount();
+			int ret = service.selectCount();
 
 			return ret;
 		} catch (Exception e) {
@@ -61,46 +57,30 @@ public class VueTestController {
 
 	@PostMapping("/select")
 	public List<VueTestBean> select(@RequestBody StoreForm form) {
-
-		// List<VueTestBean> ret = vuetestManager.select(form);
 		int page = (form.getPage() - 1) * 10;
 		form.setPage(page);
 		form.setPageSize(10);
-		List<VueTestBean> ret = vuetestManager.selectWithPagination(form);
-
-		return ret;
+		return service.selectWithPagination(form);
 	}
 	
 	@PostMapping("/delete")
 	public int delete(@RequestBody StoreForm form) {
-
-		int ret = vuetestManager.delete(form);
-
-		return ret;
+		return service.delete(form);
 	}
 	
 	@PostMapping("/deletes")
 	public int deletes(@RequestBody List<Integer> id) {
-
-		int ret = service.delDatas(id);
-
-		return ret;
+		return service.delDatas(id);
 	}
 
 	@PostMapping("/updata")
 	public int updata(@RequestBody StoreForm form) {
-
-		int ret = vuetestManager.update(form);
-
-		return ret;
+		return service.updata(form);
 	}
 
 	@PostMapping("/add")
 	public int add(@RequestBody StoreForm form) {
-
-		int ret = vuetestManager.addData(form);
-
-		return ret;
+		return service.add(form);
 	}
 
 	@PostMapping("/export")
@@ -112,7 +92,7 @@ public class VueTestController {
 		response.setHeader("Expires", "0");
 
 		// 准备数据
-		List<VueTestBean> ret = vuetestManager.selectId(id);
+		List<VueTestBean> ret = service.selectId(id);
 
 		// 创建 ExcelWriter 对象
 		ExcelWriter writer = ExcelUtil.getWriter(true);

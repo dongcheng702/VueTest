@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vuetest.springboot.cms.entity.VueTestBean;
+import com.vuetest.springboot.cms.form.storeform.StoreForm;
 import com.vuetest.springboot.cms.mapper.VueTestMapper;
 
 @Service
@@ -24,13 +25,42 @@ public class VueTestServiceImpl implements VueTestService {
 	private List<VueTestBean> csvList;
 
 	/**
-	 * 数据删除
+	 * 增删改查
 	 */
+	@Override
+	public List<VueTestBean> selectWithPagination(StoreForm form) {
+		return mapper.selectWithPagination(form);
+	}
+	@Override
+	public int selectCount() throws Exception {
+		int ret = mapper.selectCount();
+		return ret;
+	}
+	@Override
+	public int selectIdMax() throws Exception {
+		int ret = mapper.selectIdMax();
+		return ret;
+	}
+	@Override
+	public List<VueTestBean> selectAll() {
+		return mapper.selectAll();
+	}
+	@Override
+	public int add(StoreForm form) {
+		return mapper.addData(form);
+	}
+	@Override
+	public int updata(StoreForm form) {
+		return mapper.updata(form);	
+	}
 	@Override
 	public int delDatas(List<Integer> id) {
 		return mapper.deletes(id);
 	}
-	
+	@Override
+	public int delete(StoreForm form) {
+		return mapper.delete(form);
+	}
 	/**
 	 *  上传文件到数据库
 	 */
@@ -89,6 +119,7 @@ public class VueTestServiceImpl implements VueTestService {
 
 	// 时间格式处理
 	private Timestamp FormatToTimestamp(String dt) {
+
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/M/d H:m:s");
 		Date parsedDate;
 		try {
@@ -98,6 +129,11 @@ public class VueTestServiceImpl implements VueTestService {
 			return null;
 		}
 		return new java.sql.Timestamp(parsedDate.getTime());
+	}
+	@Override
+	
+	public List<VueTestBean> selectId(List<Integer> id) throws Exception {
+		return mapper.selectId(id);
 	}
 
 
