@@ -7,11 +7,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.vuetest.springboot.cms.entity.VueTestBean;
 import com.vuetest.springboot.cms.form.storeform.StoreForm;
 import com.vuetest.springboot.cms.mapper.VueTestMapper;
+import com.vuetest.springboot.cms.service.VueTestService;
 
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -24,6 +27,8 @@ public class VueTestController {
 
 	@Autowired
 	private VueTestMapper vuetestManager;
+	@Autowired
+	private VueTestService service;
 
 	@GetMapping("/")
 	public List<VueTestBean> init() {
@@ -41,7 +46,7 @@ public class VueTestController {
 			return 0;
 		}
 	}
-	
+
 	@GetMapping("/selectCount")
 	public int selectCount() {
 		try {
@@ -57,21 +62,27 @@ public class VueTestController {
 	@PostMapping("/select")
 	public List<VueTestBean> select(@RequestBody StoreForm form) {
 
-		//List<VueTestBean> ret = vuetestManager.select(form);
-		int page = (form.getPage() - 1) * 10 ;
+		// List<VueTestBean> ret = vuetestManager.select(form);
+		int page = (form.getPage() - 1) * 10;
 		form.setPage(page);
 		form.setPageSize(10);
 		List<VueTestBean> ret = vuetestManager.selectWithPagination(form);
-		
+
 		return ret;
 	}
 	
-	
-
 	@PostMapping("/delete")
 	public int delete(@RequestBody StoreForm form) {
 
 		int ret = vuetestManager.delete(form);
+
+		return ret;
+	}
+	
+	@PostMapping("/deletes")
+	public int deletes(@RequestBody List<Integer> id) {
+
+		int ret = service.delDatas(id);
 
 		return ret;
 	}
@@ -92,9 +103,8 @@ public class VueTestController {
 		return ret;
 	}
 
-
 	@PostMapping("/export")
-	public void export(@RequestBody List<Integer> id,HttpServletResponse response) throws Exception {
+	public void export(@RequestBody List<Integer> id, HttpServletResponse response) throws Exception {
 
 		// 设置响应头禁用缓存
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -136,4 +146,22 @@ public class VueTestController {
 		outputStream.close();
 		writer.close();
 	}
+
+	@PostMapping("/upfile")
+	public int upfile(@RequestParam("file") MultipartFile file) {
+		int ret = 0;
+		// 处理上传的文件
+		if (!file.isEmpty()) {
+			try {
+				ret = service.registCsvToMySql(file.getBytes(), 8);
+			} catch (Exception e) {
+				return -1;
+			}
+
+			return ret; // 成功处理文件
+		} else {
+			return ret; // 文件为空
+		}
+	}
+
 }

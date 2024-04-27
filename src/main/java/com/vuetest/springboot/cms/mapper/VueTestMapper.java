@@ -66,7 +66,7 @@ public interface VueTestMapper {
 	    "</script>"
 	})
 	List<VueTestBean> selectId(@Param("id") List<Integer> id);
-	
+
 	@Delete({
 	    "<script>",
 	    "delete from market_store",
@@ -109,5 +109,28 @@ public interface VueTestMapper {
 	})
 	int addData(@Param("form") StoreForm form);
 
+	
+	@Insert({
+	    "<script>",
+	    "insert into market_store (storeId, storeName, address, phone, startDay, finishDay, registDay, updateDay) values",
+	    "<foreach item='item' collection='csvList' separator=','>",
+	    "(#{item.storeId}, #{item.storeName}, #{item.address}, #{item.phone}, #{item.startDay}, #{item.finishDay}, NOW(), NOW())",
+	    "</foreach>",
+	    "</script>"
+	})
+	int insertBulk(@Param("csvList") List<VueTestBean> csvList);
 
+	
+	@Delete({
+	    "<script>",
+	    "delete from market_store",
+	    "<where>",
+	    "<foreach item='storeId' collection='id' separator='or'>",
+	    "(storeId = #{storeId})",
+	    "</foreach>",
+	    "</where>",
+	    "</script>"
+	})
+	int deletes(@Param("id") List<Integer> id);
+	
 }
