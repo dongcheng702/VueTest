@@ -1,19 +1,21 @@
-package com.vuetest.springboot.cms.controller;
+package com.vuetest.springboot.cms.controller.storecontroller;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.vuetest.springboot.cms.entity.VueTestBean;
+import com.vuetest.springboot.cms.common.Constants;
+import com.vuetest.springboot.cms.common.Result;
+import com.vuetest.springboot.cms.entity.storeentity.StoreBean;
 import com.vuetest.springboot.cms.form.storeform.StoreForm;
-import com.vuetest.springboot.cms.service.VueTestService;
+import com.vuetest.springboot.cms.service.storeservice.StoreService;
 
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -21,66 +23,83 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@SpringBootApplication
-public class VueTestController {
+@RequestMapping(value = "/store")
+public class StoreController {
 	@Autowired
-	private VueTestService service;
+	private StoreService service;
 
 	@GetMapping("/")
-	public List<VueTestBean> init() {
-		return service.selectAll();
+	public Result init() {
+		return Result.success(service.selectAll());
 	}
 
 	@GetMapping("/selectIdMax")
-	public int selectIdMax() {
+	public Result selectIdMax() {
 		try {
 			int ret = service.selectIdMax();
 
-			return ret;
+			return Result.success(ret);
 		} catch (Exception e) {
 
-			return 0;
+			return Result.success(0);
 		}
 	}
-
+	
 	@GetMapping("/selectCount")
-	public int selectCount() {
+	public Result selectCount() {
 		try {
 			int ret = service.selectCount();
 
-			return ret;
+			return Result.success(ret);
 		} catch (Exception e) {
 
-			return 0;
+			return Result.success(0);
 		}
 	}
-
+	
 	@PostMapping("/select")
-	public List<VueTestBean> select(@RequestBody StoreForm form) {
+	public Result select(@RequestBody StoreForm form) {
 		int page = (form.getPage() - 1) * 10;
 		form.setPage(page);
 		form.setPageSize(10);
-		return service.selectWithPagination(form);
+
+		return Result.success(service.selectWithPagination(form));
 	}
 	
 	@PostMapping("/delete")
-	public int delete(@RequestBody StoreForm form) {
-		return service.delete(form);
+	public Result delete(@RequestBody StoreForm form) {
+		int ret = service.delete(form);
+		if(ret == 1) {
+			return Result.success(ret);	
+		}
+		return Result.error(Constants.CODE_600, "删除失败");
 	}
 	
 	@PostMapping("/deletes")
-	public int deletes(@RequestBody List<Integer> id) {
-		return service.delDatas(id);
+	public Result deletes(@RequestBody List<Integer> id) {
+		int ret = service.delDatas(id);
+		if(ret > 0) {
+			return Result.success(ret);	
+		}
+		return Result.error(Constants.CODE_600, "有" + (id.size() - ret) + "条数据删除失败");
 	}
 
 	@PostMapping("/updata")
-	public int updata(@RequestBody StoreForm form) {
-		return service.updata(form);
+	public Result updata(@RequestBody StoreForm form) {
+		int ret = service.updata(form);
+		if(ret == 1) {
+			return Result.success(ret);	
+		}
+		return Result.error(Constants.CODE_600, "更新失败");
 	}
 
 	@PostMapping("/add")
-	public int add(@RequestBody StoreForm form) {
-		return service.add(form);
+	public Result add(@RequestBody StoreForm form) {
+		int ret = service.add(form);
+		if(ret == 1) {
+			return Result.success(ret);	
+		}
+		return Result.error(Constants.CODE_600, "新增失败");
 	}
 
 	@PostMapping("/export")
@@ -92,7 +111,7 @@ public class VueTestController {
 		response.setHeader("Expires", "0");
 
 		// 准备数据
-		List<VueTestBean> ret = service.selectId(id);
+		List<StoreBean> ret = service.selectId(id);
 
 		// 创建 ExcelWriter 对象
 		ExcelWriter writer = ExcelUtil.getWriter(true);
@@ -128,19 +147,19 @@ public class VueTestController {
 	}
 
 	@PostMapping("/upfile")
-	public int upfile(@RequestParam("file") MultipartFile file) {
+	public Result upfile(@RequestParam("file") MultipartFile file) {
 		int ret = 0;
 		// 处理上传的文件
 		if (!file.isEmpty()) {
 			try {
 				ret = service.registCsvToMySql(file.getBytes(), 8);
 			} catch (Exception e) {
-				return -1;
+				return Result.error(Constants.CODE_600,"上传失败,主键冲突");
 			}
 
-			return ret; // 成功处理文件
+			return Result.success(ret); // 成功处理文件
 		} else {
-			return ret; // 文件为空
+			return Result.error(Constants.CODE_400,"文件为空"); // 文件为空
 		}
 	}
 

@@ -1,4 +1,4 @@
-package com.vuetest.springboot.cms.service;
+package com.vuetest.springboot.cms.service.storeservice;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -10,25 +10,25 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.vuetest.springboot.cms.entity.VueTestBean;
+import com.vuetest.springboot.cms.entity.storeentity.StoreBean;
 import com.vuetest.springboot.cms.form.storeform.StoreForm;
-import com.vuetest.springboot.cms.mapper.VueTestMapper;
+import com.vuetest.springboot.cms.mapper.storemapper.StoreMapper;
 
 @Service
-public class VueTestServiceImpl implements VueTestService {
+public class StoreServiceImpl implements StoreService {
 
 	@Autowired
-	private VueTestMapper mapper;
+	private StoreMapper mapper;
 	
 	private int insCount;
 	
-	private List<VueTestBean> csvList;
+	private List<StoreBean> csvList;
 
 	/**
 	 * 增删改查
 	 */
 	@Override
-	public List<VueTestBean> selectWithPagination(StoreForm form) {
+	public List<StoreBean> selectWithPagination(StoreForm form) {
 		return mapper.selectWithPagination(form);
 	}
 	@Override
@@ -42,7 +42,7 @@ public class VueTestServiceImpl implements VueTestService {
 		return ret;
 	}
 	@Override
-	public List<VueTestBean> selectAll() {
+	public List<StoreBean> selectAll() {
 		return mapper.selectAll();
 	}
 	@Override
@@ -76,7 +76,7 @@ public class VueTestServiceImpl implements VueTestService {
 	}
 
 	private void splitData(String data,int count) throws Exception {
-		csvList = new ArrayList<VueTestBean>();
+		csvList = new ArrayList<StoreBean>();
 		data = data.replaceAll("\"", "");
 		String[] itemValues = data.split("\\r\\n");
 		if(count != itemValues[0].split(",").length){
@@ -89,7 +89,7 @@ public class VueTestServiceImpl implements VueTestService {
 		
 				
 		for(int i = 1;i < itemValues.length;i++) {
-			VueTestBean bean = saveToList(itemValues[i]);
+			StoreBean bean = saveToList(itemValues[i]);
 			if (bean != null) {
 				csvList.add(bean);
 			}
@@ -101,10 +101,10 @@ public class VueTestServiceImpl implements VueTestService {
 		
 	}
 	
-	private VueTestBean saveToList(String data) throws Exception {
+	private StoreBean saveToList(String data) throws Exception {
 		String[] itemValues = data.split(",");
 
-		VueTestBean bean = new VueTestBean();
+		StoreBean bean = new StoreBean();
 		bean.setStoreId(itemValues[0]);
 		bean.setStoreName(itemValues[1]);
 		bean.setAddress(itemValues[2]);
@@ -132,7 +132,7 @@ public class VueTestServiceImpl implements VueTestService {
 	}
 	@Override
 	
-	public List<VueTestBean> selectId(List<Integer> id) throws Exception {
+	public List<StoreBean> selectId(List<Integer> id) throws Exception {
 		return mapper.selectId(id);
 	}
 

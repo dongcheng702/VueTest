@@ -1,11 +1,11 @@
-package com.vuetest.springboot.cms.service;
+package com.vuetest.springboot.cms.service.storeservice;
 
 import java.util.List;
 
-import com.vuetest.springboot.cms.entity.VueTestBean;
+import com.vuetest.springboot.cms.entity.storeentity.StoreBean;
 import com.vuetest.springboot.cms.form.storeform.StoreForm;
 
-public interface VueTestService {
+public interface StoreService {
 	
 	public int registCsvToMySql(byte[] bytes,int count) throws Exception;
 	
@@ -17,13 +17,14 @@ public interface VueTestService {
 	
 	public int add(StoreForm form);
 	
-	public List<VueTestBean> selectAll();
+	public List<StoreBean> selectAll();
 	
 	public int selectIdMax() throws Exception;
 	
 	public int selectCount() throws Exception;
 	
-	public List<VueTestBean> selectId(List<Integer> id) throws Exception;
+	public List<StoreBean> selectId(List<Integer> id) throws Exception;
 	
-	public List<VueTestBean> selectWithPagination(StoreForm form);
+	public List<StoreBean> selectWithPagination(StoreForm form);
+	
 }

@@ -1,10 +1,8 @@
 package com.vuetest.springboot.cms.form.storeform;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class StoreForm {
 	
 	String storeId;

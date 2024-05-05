@@ -1,8 +1,8 @@
-package com.vuetest.springboot.cms.entity;
+package com.vuetest.springboot.cms.entity.storeentity;
 import lombok.Data;
 
 @Data
-public class VueTestBean {
+public class StoreBean {
 
 	private String storeId;
 	

@@ -1,4 +1,4 @@
-package com.vuetest.springboot.cms.mapper;
+package com.vuetest.springboot.cms.mapper.storemapper;
 
 import java.util.List;
 
@@ -9,14 +9,14 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.vuetest.springboot.cms.entity.VueTestBean;
+import com.vuetest.springboot.cms.entity.storeentity.StoreBean;
 import com.vuetest.springboot.cms.form.storeform.StoreForm;
 
 @Mapper
-public interface VueTestMapper {
+public interface StoreMapper {
 	
 	@Select("select storeId,storeName from market_store")
-	List<VueTestBean> selectAll();
+	List<StoreBean> selectAll();
 	
 	@Select("select max(CAST(storeId AS UNSIGNED)) from market_store")
 	int selectIdMax();
@@ -37,7 +37,7 @@ public interface VueTestMapper {
 	    "</where>",
 	    "</script>"
 	})
-	List<VueTestBean> select(@Param("form") StoreForm form);
+	List<StoreBean> select(@Param("form") StoreForm form);
 	
 	@Select({
 	    "<script>",
@@ -53,7 +53,7 @@ public interface VueTestMapper {
 	    "limit #{form.page}, #{form.pageSize}", // 添加分页查询条件，注意小写的page和pageSize
 	    "</script>"
 	})
-	List<VueTestBean> selectWithPagination(@Param("form") StoreForm form);
+	List<StoreBean> selectWithPagination(@Param("form") StoreForm form);
 	
 	@Select({
 	    "<script>",
@@ -65,7 +65,7 @@ public interface VueTestMapper {
 	    "</where>",
 	    "</script>"
 	})
-	List<VueTestBean> selectId(@Param("id") List<Integer> id);
+	List<StoreBean> selectId(@Param("id") List<Integer> id);
 
 	@Delete({
 	    "<script>",
@@ -118,7 +118,7 @@ public interface VueTestMapper {
 	    "</foreach>",
 	    "</script>"
 	})
-	int insertBulk(@Param("csvList") List<VueTestBean> csvList);
+	int insertBulk(@Param("csvList") List<StoreBean> csvList);
 
 	
 	@Delete({
