@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import com.vuetest.springboot.cms.common.Constants;
 import com.vuetest.springboot.cms.common.Result;
 import com.vuetest.springboot.cms.entity.storeentity.StoreBean;
 import com.vuetest.springboot.cms.form.storeform.StoreForm;
+import com.vuetest.springboot.cms.interceptor.JwtInterceptor;
 import com.vuetest.springboot.cms.service.storeservice.StoreService;
 
 import cn.hutool.poi.excel.ExcelUtil;
@@ -27,6 +29,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class StoreController {
 	@Autowired
 	private StoreService service;
+	@Autowired
+	private JwtInterceptor jwtInterceptor;
 
 	@GetMapping("/")
 	public Result init() {
@@ -147,7 +151,13 @@ public class StoreController {
 	}
 
 	@PostMapping("/upfile")
-	public Result upfile(@RequestParam("file") MultipartFile file) {
+	public Result upfile(@RequestParam("file") MultipartFile file, StandardMultipartHttpServletRequest request) {
+        String token = request.getHeader("token");
+        // 进行 token 验证
+        if (!jwtInterceptor.isTokenValid(token)) {
+            return Result.error(Constants.CODE_600, "Token 验证失败");
+        }
+        
 		int ret = 0;
 		// 处理上传的文件
 		if (!file.isEmpty()) {
